@@ -8,7 +8,7 @@
 
       <v-card-text>
         <v-radio-group v-model="settingsData.mode" row>
-          <v-radio label="Server" value="server"></v-radio>
+          <v-radio label="Socket" value="server"></v-radio>
           <v-radio label="Client" value="client"></v-radio>
         </v-radio-group>
         {{ settingsData }}
@@ -28,7 +28,7 @@
 import storage from "electron-json-storage";
 
 export default {
-  name: "Settings",
+  name: 'Settings',
   props: {},
   data: () => {
     return {
@@ -52,10 +52,10 @@ export default {
     storage.get('settings', (error, data) => {
       if (error) throw error;
 
-      if (data.mode === undefined) {
-        this.setDefaultSettings()
-        this.dialog = true
-      }
+      // if (data.mode === undefined) {
+      //   this.setDefaultSettings()
+      //   this.dialog = true
+      // }
     });
 
   },
