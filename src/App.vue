@@ -2,9 +2,8 @@
   <v-app>
     <div class="d-flex titleBar" :class="socket.isConnected ? '' : 'red'" style="height: 100%">
       <Settings @updated="settingsUpdate"></Settings>
-      <Banner :text="socket.data.text"></Banner>
+      <Banner :text="socket.data.text" :shift="socket.data.shift" :time="socket.data.time" :transform="socket.data.transform"></Banner>
       <div v-if="! socket.isConnected" class="pa-5" style="position: relative">Disconnected</div>
-      {{socket.data}}
     </div>
   </v-app>
 
@@ -32,7 +31,7 @@ export default {
 
   },
   mounted() {
-    this.socket.connect("192.168.31.81")
+    this.settingsUpdate()
     storage.getAll(function (error, data){
       console.log(data)
     })
@@ -45,15 +44,14 @@ export default {
   },
   methods :{
     settingsUpdate(){
-      // storage.get("settings", (error, data)=>{
-      //   this.settingsData = data
-      //   if(data.mode === 'server'){
-      //
-      //   }else {
-      //     this.socket.destroy()
-      //     console.log(this.$socket.readyState)
-      //   }
-      // })
+      storage.get("settings", (error, data)=>{
+        this.settingsData = data
+        if(data.server !== undefined){
+          this.socket.connect(data.server,data.id)
+        }else {
+          this.socket.disConnect()
+        }
+      })
     },
   }
 }

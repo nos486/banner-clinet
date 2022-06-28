@@ -7,10 +7,9 @@
       </v-card-title>
 
       <v-card-text>
-        <v-radio-group v-model="settingsData.mode" row>
-          <v-radio label="Socket" value="server"></v-radio>
-          <v-radio label="Client" value="client"></v-radio>
-        </v-radio-group>
+        <v-text-field v-model="settingsData.server" placeholder="Server IP"></v-text-field>
+        <v-text-field v-model="settingsData.height" placeholder="Height"></v-text-field>
+        <v-text-field v-model="settingsData.id" placeholder="ID"></v-text-field>
         {{ settingsData }}
       </v-card-text>
 
@@ -52,17 +51,17 @@ export default {
     storage.get('settings', (error, data) => {
       if (error) throw error;
 
-      // if (data.mode === undefined) {
-      //   this.setDefaultSettings()
-      //   this.dialog = true
-      // }
+      if (data.server === undefined) {
+        // this.setDefaultSettings()
+        this.dialog = true
+      }
     });
 
   },
   methods: {
     setDefaultSettings() {
       let defaultSettings = {
-        "mode": "client"
+        "server": "client"
       }
       storage.set("settings", defaultSettings, (error) => {
         if (error) throw error;

@@ -16,34 +16,41 @@ class Socket {
         return this;
     }
 
-    connect(address = '127.0.0.1', port = 1337) {
+    connect(address = '127.0.0.1',id=0, port = 1337) {
 
         this._socket = new net.Socket()
         this._socket.connect(port, address, () => {
             this._isConnected = true
-            this.sendToServer("connect", {width: window.innerWidth})
+            this.sendToServer("connect", {width: window.innerWidth,id:id})
         });
 
         this._socket.on('data', (data) => {
-            this.dataReceived(data)
+            let list = data.toString().split("/n")
+            for (let data of list){
+                if (data.length > 0) this.dataReceived(data)
+            }
         });
 
         this._socket.on('close', () => {
             this._isConnected = false
             console.log('Connection closed', this._socket);
         });
-
-        console.log(this._socket)
     }
 
     disConnect() {
-        this._socket.close()
-        this._socket.destroy()
-        console.log("client disconnected")
+        if(this._socket !== null){
+            this._socket.close()
+            this._socket.destroy()
+            console.log("client disconnected")
+        }
     }
 
     sendToServer(method, param) {
-        this._socket.write(JSON.stringify({method, param}));
+        if(this.isConnected){
+            this._socket.write(JSON.stringify({method, param}));
+        }else {
+            alert("client not connected")
+        }
     }
 
     get isConnected() {
@@ -55,11 +62,16 @@ class Socket {
     }
 
     dataReceived(data){
+        console.log(data.toString())
         data = JSON.parse(data)
         console.log('Received: ' + data);
-        this._date = data
+
 
         if (data.code === 200){
+            switch (data.method){
+                case "setData" :
+                    this._date = data.result
+            }
             console.log(data.message)
         }
 
